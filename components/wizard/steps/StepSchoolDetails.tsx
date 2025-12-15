@@ -59,15 +59,36 @@ export default function StepSchoolDetails() {
 
         <input
           type="file"
-          accept="image/png,image/svg+xml,image/jpeg,image/webp"
+          accept="image/png,image/svg+xml,image/jpeg,image/jpg,image/webp"
           onChange={(e) => {
             const file = e.target.files?.[0]
+            if (!file) {
+              setValue('schoolLogo', undefined, { shouldValidate: true })
+              return
+            }
+
+            // Validate file type
+            const allowedTypes = ['image/png', 'image/svg+xml', 'image/jpeg', 'image/jpg', 'image/webp']
+            if (!allowedTypes.includes(file.type)) {
+              setValue('schoolLogo', undefined, { shouldValidate: true })
+              alert('Invalid file type. Please upload PNG, JPG, WebP, or SVG.')
+              return
+            }
+
+            // Validate file size (3MB max)
+            const maxSize = 3 * 1024 * 1024 // 3MB
+            if (file.size > maxSize) {
+              setValue('schoolLogo', undefined, { shouldValidate: true })
+              alert('File size exceeds 3MB. Please upload a smaller file.')
+              return
+            }
+
             setValue('schoolLogo', file, { shouldValidate: true })
           }}
         />
 
         <div style={{ marginTop: 8, fontSize: 12, opacity: 0.8 }}>
-          png or svg preferred for quality reasons. One file only.
+          Accepted formats: PNG, JPG, WebP, SVG. Max size: 3MB.
         </div>
 
         {logo instanceof File && (

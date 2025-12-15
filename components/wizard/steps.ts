@@ -7,7 +7,7 @@ export type WizardStep = {
 }
 
 export const steps: WizardStep[] = [
-  { id: 'disclaimer', title: 'Disclaimer', fields: [] },
+  { id: 'disclaimer', title: 'Disclaimer', fields: ['disclaimerAccepted'] },
 
   {
     id: 'schoolDetails',
@@ -55,7 +55,17 @@ export const steps: WizardStep[] = [
     ],
   },
 
-  { id: 'arrangements', title: 'School Admission Arrangements', fields: [] },
-  { id: 'finalising', title: 'Finalising the Text', fields: [] },
+  {
+    id: 'arrangements',
+    title: 'School Admission Arrangements',
+    fields: ['oversubscriptionCriteria', 'catchmentMap'],
+  },
+
+  {
+    id: 'finalising',
+    title: 'Finalising the Text',
+    fields: ['criteriaOrder', 'supportDocuments', 'contactEmail', 'contactPhone'],
+  },
+
   { id: 'complete', title: 'Complete / Download', fields: [] },
 ]

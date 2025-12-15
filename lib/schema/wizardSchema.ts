@@ -6,6 +6,9 @@ const fileSchema = z
   .refine((v) => v === undefined || v === null || v instanceof File, 'Invalid file')
 
 export const wizardSchema = z.object({
+  // Step 1: Disclaimer
+  disclaimerAccepted: z.boolean().refine((v) => v === true, 'You must accept the disclaimer to proceed'),
+
   // Step 2: School Details
   schoolName: z.string().min(1, 'School name is required'),
   schoolAddress: z.string().min(1, 'School address is required'),
@@ -16,7 +19,7 @@ export const wizardSchema = z.object({
   // File upload (logo) – optional for now (we can make it required later)
   schoolLogo: fileSchema.optional(),
 
-  // Vision statement (for MVP we’ll use a textarea; rich text later)
+  // Vision statement (for MVP we'll use a textarea; rich text later)
   visionStatement: z.string().min(1, 'Vision statement is required'),
 
   diocese: z.string().min(1, 'Diocese is required'),
@@ -32,8 +35,8 @@ export const wizardSchema = z.object({
 
   faithAdmissionsLastYear: z
     .string()
-    .min(1, 'Please enter a number')
-    .refine((v) => !Number.isNaN(Number(v)), 'Must be a number'),
+    .optional()
+    .refine((v) => !v || !Number.isNaN(Number(v)), 'Must be a number'),
 
   appealDays: z
     .string()
@@ -42,10 +45,6 @@ export const wizardSchema = z.object({
     .refine((v) => Number(v) >= 20, 'Must be at least 20'),
 
   admissionYear: z.string().min(1, 'Admission year is required'),
-
-  // Step 1 Disclaimer (we’ll do later) / other steps placeholders:
-  // disclaimerAccepted: z.boolean(),
-
 
   // Step 3: Published Admission Number
   pan: z.string().min(1, 'PAN is required'),
@@ -61,9 +60,9 @@ export const wizardSchema = z.object({
   ),
 
   yearOfLastConsultation: z
-  .string()
-  .min(4, 'Enter a year')
-  .refine((v) => /^\d{4}$/.test(v), 'Enter a 4-digit year'),
+    .string()
+    .min(4, 'Enter a year')
+    .refine((v) => /^\d{4}$/.test(v), 'Enter a 4-digit year'),
 
   scheduledReviewMeetingDate: z.string().min(1, 'Meeting date is required'),
   consultationDeadline: z.string().min(1, 'Consultation deadline is required'),
@@ -71,6 +70,23 @@ export const wizardSchema = z.object({
   dateDeterminedByGovBody: z.string().min(1, 'Determination date is required'),
   dateForwardedToLAandDBE: z.string().min(1, 'Forwarded date is required'),
 
+  // Step 4: Admission Arrangements
+  oversubscriptionCriteria: z.array(z.object({
+    id: z.string(),
+    text: z.string().min(1, 'Criterion text is required'),
+    priority: z.number(),
+  })).min(1, 'At least one oversubscription criterion is required'),
+
+  catchmentMap: fileSchema.optional(),
+
+  // Step 5: Finalising
+  criteriaOrder: z.array(z.string()).optional(), // Array of criterion IDs in desired order
+  supportDocuments: z.array(z.object({
+    name: z.string().min(1, 'Document name is required'),
+    url: z.string().url('Please enter a valid URL').or(z.literal('')),
+  })).optional(),
+  contactEmail: z.string().email('Please enter a valid email address').or(z.literal('')).optional(),
+  contactPhone: z.string().optional(),
 })
 
 export type WizardFormValues = z.infer<typeof wizardSchema>
