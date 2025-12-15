@@ -7,9 +7,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import Stepper from './Stepper'
 import { steps } from './steps'
 
-import StepSchool from './StepSchool'
-import StepContext from './StepContext'
-import ReviewStep from './ReviewStep'
+// ✅ New step components
+import StepDisclaimer from './steps/StepDisclaimer'
+import StepSchoolDetails from './steps/StepSchoolDetails'
+import StepPAN from './steps/StepPAN'
+import StepArrangements from './steps/StepArrangements'
+import StepFinalising from './steps/StepFinalising'
+import StepComplete from './steps/StepComplete'
 
 import { wizardSchema, type WizardFormValues } from '@/lib/schema/wizardSchema'
 
@@ -23,9 +27,39 @@ export default function Wizard() {
     mode: 'onTouched',
     defaultValues: {
       schoolName: '',
-      schoolLocation: '',
-      context: '',
-    },
+      schoolAddress: '',
+      schoolWebsite: '',
+      schoolType: '',
+      schoolPhase: '',
+      schoolLogo: undefined,
+      visionStatement: '',
+      diocese: '',
+      admissionsAuthority: '',
+      namedContact: '',
+      localAuthority: '',
+      localAuthorityAddress: '',
+      ageRange: '',
+      numberOnRoll: '',
+      wasOversubscribedLastYear: 'no',
+      hadFaithBasedCriteriaLastYear: 'no',
+      faithAdmissionsLastYear: '',
+      appealDays: '20',
+      admissionYear: '',
+      pan: '',
+      yearGroups: {
+        reception: false,
+        year3: false,
+        year7: false,
+        year12: false,
+      },
+      yearOfLastConsultation: '',
+      scheduledReviewMeetingDate: '',
+      consultationDeadline: '',
+      dateIssuedForConsultation: '',
+      dateDeterminedByGovBody: '',
+      dateForwardedToLAandDBE: '',
+    }
+    
   })
 
   const isFirstStep = currentStep === 0
@@ -37,15 +71,16 @@ export default function Wizard() {
   }
 
   const next = async () => {
-    const fields = step.fields
     const ok =
-      fields.length === 0
+      step.fields.length === 0
         ? true
-        : await methods.trigger(fields, { shouldFocus: true })
-
+        : await methods.trigger(step.fields as any, { shouldFocus: true })
+  
     if (!ok) return
     if (!isLastStep) setCurrentStep((s) => s + 1)
   }
+  
+  
 
   const onGenerate = async () => {
     setIsGenerating(true)
@@ -91,22 +126,34 @@ export default function Wizard() {
 
   const StepComponent = useMemo(() => {
     switch (step.id) {
-      case 'school':
-        return <StepSchool />
-      case 'context':
-        return <StepContext />
-      case 'review':
+      case 'disclaimer':
+        return <StepDisclaimer />
+
+      case 'schoolDetails':
+        return <StepSchoolDetails />
+
+      case 'pan':
+        return <StepPAN />
+
+      case 'arrangements':
+        return <StepArrangements />
+
+      case 'finalising':
+        return <StepFinalising />
+
+      case 'complete':
         return (
-          <ReviewStep
+          <StepComplete
             onGenerate={onGenerate}
             isGenerating={isGenerating}
             error={generateError}
           />
         )
+
       default:
-        return <div>Step content goes here</div>
+        return <div>Unknown step</div>
     }
-  }, [step.id, isGenerating, generateError])
+  }, [step.id, isGenerating, generateError, methods])
 
   return (
     <FormProvider {...methods}>

@@ -3,32 +3,59 @@ import type { WizardFormValues } from '@/lib/schema/wizardSchema'
 export type WizardStep = {
   id: string
   title: string
-  fields: (keyof WizardFormValues)[]
+  fields: (keyof WizardFormValues | string)[]
 }
 
 export const steps: WizardStep[] = [
+  { id: 'disclaimer', title: 'Disclaimer', fields: [] },
+
   {
-    id: 'school',
-    title: 'School details',
-    fields: ['schoolName', 'schoolLocation'],
+    id: 'schoolDetails',
+    title: 'School Details',
+    fields: [
+      'schoolName',
+      'schoolAddress',
+      'schoolWebsite',
+      'schoolType',
+      'schoolPhase',
+      'schoolLogo',
+      'visionStatement',
+      'diocese',
+      'admissionsAuthority',
+      'namedContact',
+      'localAuthority',
+      'localAuthorityAddress',
+      'ageRange',
+      'numberOnRoll',
+      'wasOversubscribedLastYear',
+      'hadFaithBasedCriteriaLastYear',
+      'faithAdmissionsLastYear',
+      'appealDays',
+      'admissionYear',
+    ],
   },
+
   {
-    id: 'context',
-    title: 'Context',
-    fields: ['context'],
+    id: 'pan',
+    title: 'Published Admission Number',
+    fields: [
+      'pan',
+      'yearOfLastConsultation',
+      'scheduledReviewMeetingDate',
+      'consultationDeadline',
+      'dateIssuedForConsultation',
+      'dateDeterminedByGovBody',
+      'dateForwardedToLAandDBE',
+
+      // nested checkboxes (need string paths)
+      'yearGroups.reception',
+      'yearGroups.year3',
+      'yearGroups.year7',
+      'yearGroups.year12',
+    ],
   },
-  {
-    id: 'review',
-    title: 'Review & generate',
-    fields: [],
-  },
+
+  { id: 'arrangements', title: 'School Admission Arrangements', fields: [] },
+  { id: 'finalising', title: 'Finalising the Text', fields: [] },
+  { id: 'complete', title: 'Complete / Download', fields: [] },
 ]
-
-
-
-// Add the rest later, following the same pattern:
-// { id: 'strengths', title: 'Strengths', fields: ['strengths'] },
-// { id: 'challenges', title: 'Challenges', fields: ['challenges'] },
-// { id: 'actions', title: 'Actions', fields: ['actions'] },
-// { id: 'summary', title: 'Summary', fields: ['summary'] },
-// { id: 'review', title: 'Review & generate', fields: [] },
