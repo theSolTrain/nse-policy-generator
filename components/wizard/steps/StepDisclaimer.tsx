@@ -16,7 +16,7 @@ export default function StepDisclaimer() {
 
   return (
     <div style={{ display: 'grid', gap: 18 }}>
-      <div style={{ padding: 16, backgroundColor: 'black', borderRadius: 8 }}>
+      <div style={{ padding: 16, borderRadius: 8 }}>
         <h3 style={{ marginTop: 0 }}>Disclaimer</h3>
         <p>
           By proceeding, you acknowledge that you are authorized to complete this form on behalf of your school.
