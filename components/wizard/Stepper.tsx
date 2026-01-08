@@ -8,18 +8,21 @@ type Props = {
 
 export default function Stepper({ currentStep }: Props) {
   return (
-    <ol style={{ display: 'flex', gap: 16 }}>
-      {steps.map((step, index) => (
-        <li
-          key={step.id}
-          style={{
-            fontWeight: index === currentStep ? 'bold' : 'normal',
-            opacity: index <= currentStep ? 1 : 0.4,
-          }}
-        >
-          {index + 1}. {step.title}
-        </li>
-      ))}
+    <ol className="stepper">
+      {steps.map((step, index) => {
+        const isCompleted = index < currentStep
+        const isCurrent = index === currentStep
+        
+        return (
+          <li
+            key={step.id}
+            className={`stepper__item ${isCurrent ? 'stepper__item--current' : ''} ${isCompleted ? 'stepper__item--completed' : ''}`}
+          >
+            <span className="stepper__item-circle"></span>
+            <span className="stepper__item-title">{step.title}</span>
+          </li>
+        )
+      })}
     </ol>
   )
 }

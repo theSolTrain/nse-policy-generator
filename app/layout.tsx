@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Libre_Franklin } from "next/font/google";
 import localFont from "next/font/local";
-import "./globals.css";
+import "./globals.scss";
 
 const libreFranklin = Libre_Franklin({
   variable: "--font-libre-franklin",

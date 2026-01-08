@@ -1,7 +1,7 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useMemo, useState, useEffect, useCallback } from 'react'
+import { FormProvider, useForm, type FieldPath } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import Stepper from './Stepper'
@@ -21,6 +21,7 @@ const STORAGE_KEY = 'nse-wizard-draft'
 
 // Helper to serialize form data (excluding files)
 function serializeFormData(data: WizardFormValues): string {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { schoolLogo, catchmentMap, ...serializable } = data
   return JSON.stringify(serializable)
 }
@@ -77,47 +78,51 @@ const defaultValues: WizardFormValues = {
 }
 
 export default function Wizard() {
-  const [currentStep, setCurrentStep] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem(`${STORAGE_KEY}-step`)
-      return saved ? parseInt(saved, 10) : 0
-    }
-    return 0
-  })
+  // Always start with 0 - same on server and client to prevent hydration mismatch
+  const [currentStep, setCurrentStep] = useState(0)
   const [isGenerating, setIsGenerating] = useState(false)
   const [isValidating, setIsValidating] = useState(false)
   const [generateError, setGenerateError] = useState<string | null>(null)
 
+  // Initialize form with default values (same on server and client)
   const methods = useForm<WizardFormValues>({
     resolver: zodResolver(wizardSchema),
     mode: 'onTouched',
-    defaultValues: (() => {
-      if (typeof window !== 'undefined') {
-        const saved = localStorage.getItem(STORAGE_KEY)
-        if (saved) {
-          const restored = deserializeFormData(saved)
-          return { ...defaultValues, ...restored }
-        }
-      }
-      return defaultValues
-    })(),
+    defaultValues, // Always use defaults initially
   })
+
+  // Restore from localStorage AFTER mount (client-side only)
+  // This prevents hydration mismatch by ensuring server and client render the same initial state
+  useEffect(() => {
+    // Restore current step
+    const savedStep = localStorage.getItem(`${STORAGE_KEY}-step`)
+    if (savedStep) {
+      const step = parseInt(savedStep, 10)
+      if (step >= 0 && step < steps.length) {
+        setCurrentStep(step)
+      }
+    }
+
+    // Restore form data
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      const restored = deserializeFormData(saved)
+      // Use reset() to update form with restored values
+      methods.reset({ ...defaultValues, ...restored })
+    }
+  }, [methods])
 
   // Save form data to localStorage on change
   useEffect(() => {
     const subscription = methods.watch((data) => {
-      if (typeof window !== 'undefined') {
-        localStorage.setItem(STORAGE_KEY, serializeFormData(data as WizardFormValues))
-      }
+      localStorage.setItem(STORAGE_KEY, serializeFormData(data as WizardFormValues))
     })
     return () => subscription.unsubscribe()
   }, [methods])
 
   // Save current step to localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(`${STORAGE_KEY}-step`, currentStep.toString())
-    }
+    localStorage.setItem(`${STORAGE_KEY}-step`, currentStep.toString())
   }, [currentStep])
 
   const isFirstStep = currentStep === 0
@@ -138,7 +143,7 @@ export default function Wizard() {
       const ok =
         step.fields.length === 0
           ? true
-          : await methods.trigger(step.fields as any, { shouldFocus: true })
+          : await methods.trigger(step.fields as FieldPath<WizardFormValues>[], { shouldFocus: true })
 
       if (!ok) return
       if (!isLastStep) setCurrentStep((s) => s + 1)
@@ -146,10 +151,8 @@ export default function Wizard() {
       setIsValidating(false)
     }
   }
-  
-  
 
-  const onGenerate = async () => {
+  const onGenerate = useCallback(async () => {
     setIsGenerating(true)
     setGenerateError(null)
 
@@ -206,12 +209,13 @@ export default function Wizard() {
       a.click()
       a.remove()
       URL.revokeObjectURL(url)
-    } catch (e: any) {
-      setGenerateError(e?.message || 'Something went wrong generating the PDF.')
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : 'Something went wrong generating the PDF.'
+      setGenerateError(errorMessage)
     } finally {
       setIsGenerating(false)
     }
-  }
+  }, [methods])
 
   const StepComponent = useMemo(() => {
     switch (step.id) {
@@ -242,7 +246,7 @@ export default function Wizard() {
       default:
         return <div>Unknown step</div>
     }
-  }, [step.id, isGenerating, generateError, methods])
+  }, [step.id, isGenerating, generateError, onGenerate])
 
   const isNavigating = isGenerating || isValidating
 
