@@ -19,7 +19,7 @@ export default function StepSchoolDetails() {
   const logo = watch('schoolLogo')
 
   return (
-    <div style={{ display: 'grid', gap: 18 }}>
+    <div className="wizard__form-content">
       {/* Two-column-ish layout without styling framework */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <label>
@@ -37,7 +37,7 @@ export default function StepSchoolDetails() {
         <label>
           <div>School website address</div>
           <input placeholder="https://www.schoolwebsite.com" {...register('schoolWebsite')} />
-          <ErrorText message={errors.schoolWebsite?.message as any} />
+          <ErrorText message={errors.schoolWebsite?.message as string} />
         </label>
 
         <label>
@@ -105,7 +105,7 @@ export default function StepSchoolDetails() {
           </div>
         )}
 
-        <ErrorText message={errors.schoolLogo?.message as any} />
+        <ErrorText message={errors.schoolLogo?.message as string} />
       </div>
 
       {/* Vision statement */}
@@ -116,7 +116,7 @@ export default function StepSchoolDetails() {
       </label>
 
       {/* Remaining fields */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16}}>
         <label>
           <div>Diocese</div>
           <input {...register('diocese')} />

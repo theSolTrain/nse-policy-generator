@@ -11,7 +11,27 @@ const libreFranklin = Libre_Franklin({
 const ppmori = localFont({
   src: '../fonts/PPMori-Regular.woff',
   display: 'swap',
+  variable: '--font-pp-mori',
 })
+
+const ppmoriExtraBold = localFont({
+  src: '../fonts/PPMori-ExtraBold.woff',
+  display: 'swap',
+  variable: '--font-pp-mori-extra-bold',
+})
+
+const saLongBeach = localFont({
+  src: '../fonts/SALongBeach.woff',
+  display: 'swap',
+  variable: '--font-sa-long-beach',
+})
+
+// Optional: Use local Libre-Franklin instead of Google Fonts
+// const libreFranklinLocal = localFont({
+//   src: '../fonts/Libre-Franklin.woff',
+//   display: 'swap',
+//   variable: '--font-libre-franklin',
+// })
 
 export const metadata: Metadata = {
   title: "NSE Policy Generator",
@@ -26,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${libreFranklin.className} ${ppmori.className} antialiased`}
+        className={`${libreFranklin.variable} ${ppmori.variable} ${ppmoriExtraBold.variable} ${saLongBeach.variable} antialiased`}
       >
         {children}
       </body>

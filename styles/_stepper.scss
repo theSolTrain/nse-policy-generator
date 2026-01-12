@@ -6,6 +6,7 @@
   align-items: flex-start;
   position: relative;
   width: 100%;
+  margin: 20px 0px;
   padding: 0 10px; // Padding to account for circle radius
 
   &__item {
@@ -74,9 +75,14 @@
   }
   
   &__item-title {
+    display: none;
     font-size: 14px;
     font-weight: 300;
     color: $color-text;
     text-align: center;
+
+    @include tablet {
+      display: block;
+    }
   }
 }

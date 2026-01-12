@@ -1,3 +1,27 @@
 $color-primary: #669EFF;
 $color-secondary: #E4EDFF;
 $color-text: #00313b;
+
+// Breakpoints
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1200px;
+$breakpoint-large-desktop: 1400px;
+
+// media queries
+@mixin tablet {
+  @media (min-width: $breakpoint-tablet) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: $breakpoint-desktop) {
+    @content;
+  }
+}
+
+@mixin large-desktop {
+  @media (min-width: $breakpoint-large-desktop) {
+    @content;
+  }
+}

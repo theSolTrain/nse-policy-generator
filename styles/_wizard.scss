@@ -1,0 +1,97 @@
+@use "./variables" as *;
+
+.wizard {
+
+  &__form-container {
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #E4EDFF;
+  }
+
+  &__form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    .wizard__form-title {
+      font-family: var(--font-pp-mori-extra-bold);
+      font-size: 26px;
+      color: #1D2226;
+
+      @include tablet {
+        font-size: 30px;
+      }
+    }
+  
+    .wizard__form-step {
+      font-family: var(--font-libre-franklin);
+      font-size: 14px;
+      color: #666666;
+
+      @include tablet {
+        font-size: 18px;
+      }
+    }
+  }
+
+
+  &__form {
+    .wizard__form-content {
+      display: grid;
+      gap: 18px;
+
+      .wizard__form-checkbox {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        cursor: pointer;
+
+        input {
+          border: 1px solid #E4EDFF;
+        }
+      }
+
+      p {
+        margin: 20px 0px;
+        padding: 0px;
+        font-family: var(--font-libre-franklin);
+        font-size: 18px;
+        letter-spacing: normal;
+        line-height: 30px;
+      }
+  
+      input {
+        border: 1px solid #E4EDFF;
+      }
+    }
+  }
+
+  .wizard__navigation {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 24px;
+    
+    .nav-button {
+      color: white;
+      background-color: $color-primary;
+      font-family: var(--font-sa-long-beach);
+      font-size: 18px;
+      font-weight: 00;
+      height: 42px;
+      letter-spacing: normal;
+      line-height: 30px;
+      padding: 0px 48px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      &:hover {
+        background-color: darken($color-primary, 10%);
+      }
+    }
+  }
+
+}

@@ -15,19 +15,17 @@ export default function StepDisclaimer() {
   } = useFormContext<WizardFormValues>()
 
   return (
-    <div style={{ display: 'grid', gap: 18 }}>
-      <div style={{ padding: 16, borderRadius: 8 }}>
-        <h3 style={{ marginTop: 0 }}>Disclaimer</h3>
-        <p>
-          By proceeding, you acknowledge that you are authorized to complete this form on behalf of your school.
-          The information provided will be used to generate admission arrangements documentation.
-        </p>
-        <p>
-          Please ensure all information is accurate and complete before generating the PDF.
-        </p>
-      </div>
+    <div className="wizard__form-content">
+      <p>
+        This Admissions Builder is a tool to assist you in preparing your admission arrangements, but it does not constitute guidance or legal advice. It does not take the place of Diocesan Board of Education guidance and consultation. 
+        <b>You must consult with your Diocesan Board of Education about your proposed admission arrangements before any public consultation. You must also have regard to any guidance from your Diocesan Board of Education when constructing any faith-based admission arrangements and must consult with your Diocesan Board of Education when deciding how membership or practice of the faith is to be demonstrated. </b> 
+        The admission authority must ensure that the admission arrangements are compliant with all relevant legislation, including the School Admissions Code.
+      </p>
+      <p>
+        Please ensure all information is accurate and complete before generating the PDF.
+      </p>
 
-      <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, cursor: 'pointer' }}>
+      <label className="wizard__form-checkbox">
         <input
           type="checkbox"
           {...register('disclaimerAccepted')}

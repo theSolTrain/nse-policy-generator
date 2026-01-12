@@ -93,24 +93,25 @@ export default function Wizard() {
 
   // Restore from localStorage AFTER mount (client-side only)
   // This prevents hydration mismatch by ensuring server and client render the same initial state
-  useEffect(() => {
-    // Restore current step
-    const savedStep = localStorage.getItem(`${STORAGE_KEY}-step`)
-    if (savedStep) {
-      const step = parseInt(savedStep, 10)
-      if (step >= 0 && step < steps.length) {
-        setCurrentStep(step)
-      }
-    }
+  // TEMPORARILY DISABLED - uncomment to re-enable restoration
+  // useEffect(() => {
+  //   // Restore current step
+  //   const savedStep = localStorage.getItem(`${STORAGE_KEY}-step`)
+  //   if (savedStep) {
+  //     const step = parseInt(savedStep, 10)
+  //     if (step >= 0 && step < steps.length) {
+  //       setCurrentStep(step)
+  //     }
+  //   }
 
-    // Restore form data
-    const saved = localStorage.getItem(STORAGE_KEY)
-    if (saved) {
-      const restored = deserializeFormData(saved)
-      // Use reset() to update form with restored values
-      methods.reset({ ...defaultValues, ...restored })
-    }
-  }, [methods])
+  //   // Restore form data
+  //   const saved = localStorage.getItem(STORAGE_KEY)
+  //   if (saved) {
+  //     const restored = deserializeFormData(saved)
+  //     // Use reset() to update form with restored values
+  //     methods.reset({ ...defaultValues, ...restored })
+  //   }
+  // }, [methods])
 
   // Save form data to localStorage on change
   useEffect(() => {
@@ -252,38 +253,35 @@ export default function Wizard() {
 
   return (
     <FormProvider {...methods}>
-      <section>
+      <section className="wizard">
         <Stepper currentStep={currentStep} />
 
-        <div style={{ marginTop: 24 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <h2 style={{ margin: 0 }}>{step.title}</h2>
-            <div style={{ fontSize: 14, color: '#666' }}>
+        <div className="wizard__form-container">
+          <div className="wizard__form-header">
+            <h2 className="wizard__form-title">{step.title}</h2>
+            <div className="wizard__form-step">
               Step {currentStep + 1} of {steps.length}
             </div>
           </div>
 
           <form
             onSubmit={(e) => e.preventDefault()}
-            style={{ padding: 20, border: '1px dashed #ccc', borderRadius: 8 }}
+            className="wizard__form"
           >
             {StepComponent}
           </form>
         </div>
 
-        <div style={{ marginTop: 24, display: 'flex', gap: 12, alignItems: 'center' }}>
+        <div className="wizard__navigation">
           {!isFirstStep && (
             <button
               type="button"
               onClick={back}
               disabled={isNavigating}
+              className="nav-button"
               style={{
-                padding: '8px 16px',
-                backgroundColor: isNavigating ? '#ccc' : '#6c757d',
-                color: 'white',
-                border: 'none',
-                borderRadius: 4,
-                cursor: isNavigating ? 'not-allowed' : 'pointer',
+                // backgroundColor: isNavigating ? '#ccc' : '#6c757d',
+                // cursor: isNavigating ? 'not-allowed' : 'pointer',
               }}
             >
               Back
@@ -295,13 +293,10 @@ export default function Wizard() {
               type="button"
               onClick={next}
               disabled={isNavigating}
+              className="nav-button"
               style={{
-                padding: '8px 16px',
-                backgroundColor: isNavigating ? '#ccc' : '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: 4,
-                cursor: isNavigating ? 'not-allowed' : 'pointer',
+                // backgroundColor: isNavigating ? '#ccc' : 'rgb(102, 158, 255)',
+                // cursor: isNavigating ? 'not-allowed' : 'pointer',
               }}
             >
               {isValidating ? 'Validating...' : 'Next'}
