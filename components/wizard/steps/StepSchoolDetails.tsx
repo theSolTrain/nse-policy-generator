@@ -5,7 +5,7 @@ import type { WizardFormValues } from '@/lib/schema/wizardSchema'
 
 function ErrorText({ message }: { message?: string }) {
   if (!message) return null
-  return <div style={{ color: 'crimson', marginTop: 6 }}>{message}</div>
+  return <div className="wizard__error-text">{message}</div>
 }
 
 export default function StepSchoolDetails() {
@@ -20,41 +20,48 @@ export default function StepSchoolDetails() {
 
   return (
     <div className="wizard__form-content">
-      {/* Two-column-ish layout without styling framework */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="form-element-wrapper">
         <label>
-          <div>School name</div>
+          <div>School name *</div>
           <input {...register('schoolName')} />
           <ErrorText message={errors.schoolName?.message} />
         </label>
+      </div>
 
+      <div className="form-element-wrapper">
         <label>
-          <div>School address</div>
-          <input {...register('schoolAddress')} />
-          <ErrorText message={errors.schoolAddress?.message} />
+        <div>School address *</div>
+        <input {...register('schoolAddress')} />
+        <ErrorText message={errors.schoolAddress?.message} />
         </label>
+      </div>
 
+      <div className="form-element-wrapper">
         <label>
-          <div>School website address</div>
-          <input placeholder="https://www.schoolwebsite.com" {...register('schoolWebsite')} />
-          <ErrorText message={errors.schoolWebsite?.message as string} />
+        <div>School website address</div>
+        <input placeholder="https://www.schoolwebsite.com" {...register('schoolWebsite')} />
+        <ErrorText message={errors.schoolWebsite?.message as string} />
         </label>
+      </div>
 
+      <div className="form-element-wrapper">
         <label>
-          <div>School type</div>
-          <input {...register('schoolType')} />
-          <ErrorText message={errors.schoolType?.message} />
+        <div>School type *</div>
+        <input {...register('schoolType')} />
+        <ErrorText message={errors.schoolType?.message} />
         </label>
+      </div>
 
-        <label style={{ gridColumn: '1 / -1' }}>
-          <div>School phase</div>
-          <input {...register('schoolPhase')} />
-          <ErrorText message={errors.schoolPhase?.message} />
+      <div className="form-element-wrapper">
+        <label>
+        <div>School phase *</div>
+        <input {...register('schoolPhase')} />
+        <ErrorText message={errors.schoolPhase?.message} />
         </label>
       </div>
 
       {/* Logo upload */}
-      <div>
+      <div className="form-element-wrapper">
         <div style={{ marginBottom: 8 }}>School logo</div>
 
         <input
@@ -109,52 +116,65 @@ export default function StepSchoolDetails() {
       </div>
 
       {/* Vision statement */}
-      <label>
-        <div>Vision statement</div>
-        <textarea rows={6} {...register('visionStatement')} />
-        <ErrorText message={errors.visionStatement?.message} />
-      </label>
-
-      {/* Remaining fields */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16}}>
+      <div className="form-element-wrapper">
         <label>
-          <div>Diocese</div>
+          <div>Vision statement</div>
+          <textarea rows={6} {...register('visionStatement')} />
+          <ErrorText message={errors.visionStatement?.message} />
+        </label>
+      </div>
+
+      <div className="form-element-wrapper">
+        <label>
+          <div>Diocese *</div>
           <input {...register('diocese')} />
           <ErrorText message={errors.diocese?.message} />
         </label>
+      </div>
 
+      <div className="form-element-wrapper">  
         <label>
-          <div>Admissions authority</div>
+          <div>Admissions authority *</div>
           <input {...register('admissionsAuthority')} />
           <ErrorText message={errors.admissionsAuthority?.message} />
         </label>
+      </div>
 
+      <div className="form-element-wrapper">
         <label style={{ gridColumn: '1 / -1' }}>
-          <div>Named post to contact for queries on admissions (including appeals)</div>
+          <div>Named post to contact for queries on admissions (including appeals) *</div>
           <input {...register('namedContact')} />
           <ErrorText message={errors.namedContact?.message} />
         </label>
+      </div>
 
+      <div className="form-element-wrapper">
         <label>
-          <div>Local authority</div>
+          <div>Local authority *</div>
           <input {...register('localAuthority')} />
           <ErrorText message={errors.localAuthority?.message} />
         </label>
+      </div>
 
+      <div className="form-element-wrapper">
         <label>
-          <div>Age range</div>
+          <div>Age range *</div>
           <input {...register('ageRange')} />
           <ErrorText message={errors.ageRange?.message} />
         </label>
+      </div>
 
+      <div className="form-element-wrapper">
         <label style={{ gridColumn: '1 / -1' }}>
-          <div>Local authority address</div>
+          <div>Local authority address *</div>
           <input {...register('localAuthorityAddress')} />
           <ErrorText message={errors.localAuthorityAddress?.message} />
         </label>
+      </div>
 
+      <div className="form-element-wrapper">
         <label>
-          <div>Number on roll</div>
+          <div>Number on roll *</div>
           <input {...register('numberOnRoll')} />
           <ErrorText message={errors.numberOnRoll?.message} />
         </label>

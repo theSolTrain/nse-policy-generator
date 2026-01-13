@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     const parsed = wizardSchema.safeParse(jsonData)
     if (!parsed.success) {
       return new NextResponse(
-        `Validation error: ${parsed.error.errors.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
+        `Validation error: ${parsed.error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join(', ')}`,
         { status: 400 }
       )
     }
@@ -94,7 +94,7 @@ export async function POST(req: Request) {
     const sanitizedName = schoolName.replace(/[^a-z0-9]/gi, '_').substring(0, 50)
     const filename = `NSE_${sanitizedName}_${admissionYear.replace('/', '-')}.pdf`
 
-    return new NextResponse(pdfBytes, {
+    return new NextResponse(pdfBytes as unknown as BodyInit, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${filename}"`,
