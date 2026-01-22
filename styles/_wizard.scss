@@ -69,10 +69,21 @@
         input {
           width: 100%;
           max-width: 100%;
+          padding-left: 8px;
 
           &[type="date"] {
             width: fit-content;
           }
+
+          &[type="file"] {
+            cursor: pointer;
+            width: fit-content;
+          }
+        }
+
+        button {
+          cursor: pointer;
+          width: fit-content;
         }
 
         textarea {
@@ -107,6 +118,7 @@
 
         .wizard__error-text {
           bottom: -10px;
+          color: crimson;
         }
       }
 

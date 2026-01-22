@@ -3,9 +3,9 @@
 import { useFormContext, useFieldArray } from 'react-hook-form'
 import type { WizardFormValues } from '@/lib/schema/wizardSchema'
 
-function ErrorText({ message }: { message?: string }) {
+function ErrorText({ message, style }: { message?: string, style?: React.CSSProperties }) {
   if (!message) return null
-  return <div style={{ color: 'crimson', marginTop: 6 }}>{message}</div>
+  return <div className="wizard__error-text" style={style}>{message}</div>
 }
 
 export default function StepArrangements() {
@@ -26,12 +26,12 @@ export default function StepArrangements() {
 
   // Initialize with one empty criterion if none exist
   if (fields.length === 0) {
-    append({ id: `criteria-${Date.now()}`, text: '', priority: 1 })
+    append({ id: `criteria-${new Date().getTime()}`, text: '', priority: 1 })
   }
 
   return (
-    <div style={{ display: 'grid', gap: 24 }}>
-      <div>
+    <div className="wizard__form-content">
+      <div className="form-element-wrapper form-element-wrapper--full-width">
         <h3 style={{ marginTop: 0, marginBottom: 12 }}>Oversubscription Criteria</h3>
         <p style={{ fontSize: 14, opacity: 0.8, marginBottom: 16 }}>
           Add the oversubscription criteria in order of priority. You can reorder them in the next step.
@@ -46,6 +46,8 @@ export default function StepArrangements() {
               borderRadius: 8,
               marginBottom: 12,
               backgroundColor: '#fafafa',
+              paddingBottom: '30px',
+              position: 'relative',
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
@@ -75,7 +77,7 @@ export default function StepArrangements() {
                 style={{ width: '100%', padding: 8 }}
                 {...register(`oversubscriptionCriteria.${index}.text` as const)}
               />
-              <ErrorText message={errors.oversubscriptionCriteria?.[index]?.text?.message} />
+              <ErrorText style={{ bottom: 8, left: 15 }} message={errors.oversubscriptionCriteria?.[index]?.text?.message as string} />
             </label>
             <input
               type="hidden"
@@ -104,13 +106,13 @@ export default function StepArrangements() {
           + Add Criterion
         </button>
 
-        <ErrorText message={errors.oversubscriptionCriteria?.message as any} />
+        <ErrorText message={errors.oversubscriptionCriteria?.message as string} />
       </div>
 
-      <div>
+      <div className="form-element-wrapper form-element-wrapper--full-width">
         <h3 style={{ marginTop: 0, marginBottom: 12 }}>Catchment Area Map</h3>
         <p style={{ fontSize: 14, opacity: 0.8, marginBottom: 8 }}>
-          Upload an image showing your school's catchment area (optional).
+          Upload an image showing your school&apos;s catchment area (optional).
         </p>
 
         <input
@@ -161,7 +163,7 @@ export default function StepArrangements() {
           </div>
         )}
 
-        <ErrorText message={errors.catchmentMap?.message as any} />
+        <ErrorText message={errors.catchmentMap?.message as string} />
       </div>
     </div>
   )

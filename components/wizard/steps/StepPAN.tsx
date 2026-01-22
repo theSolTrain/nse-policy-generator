@@ -3,9 +3,9 @@
 import { useFormContext } from 'react-hook-form'
 import type { WizardFormValues } from '@/lib/schema/wizardSchema'
 
-function ErrorText({ message }: { message?: string }) {
+function ErrorText({ message, style }: { message?: string, style?: React.CSSProperties }) {
   if (!message) return null
-  return <div className="wizard__error-text">{message}</div>
+  return <div className="wizard__error-text" style={style}>{message}</div>
 }
 
 export default function StepPAN() {
@@ -32,7 +32,7 @@ export default function StepPAN() {
         </label>
       </div>
 
-      <div className="form-element-wrapper form-element-wrapper--full-width">
+      <div className="form-element-wrapper form-element-wrapper--full-width relative">
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
           <legend>Year group(s)</legend>
 
@@ -49,7 +49,7 @@ export default function StepPAN() {
             <input type="checkbox" style={{ marginRight: 10, width: 'auto' }} {...register('yearGroups.year12')} /> Year 12
           </label>
 
-          <ErrorText message={errors.yearGroups?.message as string} />
+          <ErrorText style={{ bottom: -5, left: 0 }} message={errors.yearGroups?.message as string} />
         </fieldset>
       </div>
 

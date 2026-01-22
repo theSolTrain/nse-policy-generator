@@ -46,8 +46,10 @@ export const steps: WizardStep[] = [
       'dateIssuedForConsultation',
       'dateDeterminedByGovBody',
       'dateForwardedToLAandDBE',
-
-      // nested checkboxes (need string paths)
+      // Include parent object to trigger .refine() validation
+      // (checks that at least one checkbox is selected)
+      'yearGroups',
+      // Also include individual paths for field-level validation
       'yearGroups.reception',
       'yearGroups.year3',
       'yearGroups.year7',
