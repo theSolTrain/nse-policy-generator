@@ -118,7 +118,7 @@ export default function StepSchoolDetails() {
       {/* Vision statement */}
       <div className="form-element-wrapper">
         <label>
-          <div>Vision statement</div>
+          <div>Vision statement*</div>
           <textarea rows={6} {...register('visionStatement')} />
           <ErrorText message={errors.visionStatement?.message} />
         </label>
@@ -181,31 +181,35 @@ export default function StepSchoolDetails() {
       </div>
 
       {/* Yes/No radios */}
-      <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-        <legend>Was your school oversubscribed (in the previous admissions year, if applicable)?</legend>
-        <label style={{ display: 'block', marginTop: 6 }}>
-          <input type="radio" value="yes" {...register('wasOversubscribedLastYear')} /> Yes
-        </label>
-        <label style={{ display: 'block', marginTop: 6 }}>
-          <input type="radio" value="no" {...register('wasOversubscribedLastYear')} /> No
-        </label>
-        <ErrorText message={errors.wasOversubscribedLastYear?.message} />
-      </fieldset>
+      <div className="form-element-wrapper">
+        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+          <legend>Was your school oversubscribed (in the previous admissions year, if applicable)?</legend>
+          <label style={{ display: 'block', marginTop: 10 }}>
+            <input type="radio" value="yes" style={{ marginRight: 10, width: 'auto' }} {...register('wasOversubscribedLastYear')} /> Yes
+          </label>
+          <label style={{ display: 'block', marginTop: 6 }}>
+            <input type="radio" value="no" style={{ marginRight: 10, width: 'auto' }} {...register('wasOversubscribedLastYear')} /> No
+          </label>
+          <ErrorText message={errors.wasOversubscribedLastYear?.message} />
+        </fieldset>
+      </div>
 
+      <div className="form-element-wrapper">
       <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
         <legend>
           Did your admissions arrangements contain faith-based oversubscription criteria (in the previous admissions year)?
         </legend>
-        <label style={{ display: 'block', marginTop: 6 }}>
-          <input type="radio" value="yes" {...register('hadFaithBasedCriteriaLastYear')} /> Yes
+        <label style={{ display: 'block', marginTop: 10 }}>
+          <input type="radio" value="yes" style={{ marginRight: 10, width: 'auto' }} {...register('hadFaithBasedCriteriaLastYear')} /> Yes
         </label>
         <label style={{ display: 'block', marginTop: 6 }}>
-          <input type="radio" value="no" {...register('hadFaithBasedCriteriaLastYear')} /> No
+          <input type="radio" value="no" style={{ marginRight: 10, width: 'auto' }} {...register('hadFaithBasedCriteriaLastYear')} /> No
         </label>
         <ErrorText message={errors.hadFaithBasedCriteriaLastYear?.message} />
       </fieldset>
+      </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="form-element-wrapper">
         <label>
           <div>
             How many pupils were admitted on the basis of faith as prioritised through faith oversubscription criteria (in the previous admissions year)?
@@ -213,7 +217,9 @@ export default function StepSchoolDetails() {
           <input {...register('faithAdmissionsLastYear')} />
           <ErrorText message={errors.faithAdmissionsLastYear?.message} />
         </label>
+      </div>
 
+      <div className="form-element-wrapper">
         <label>
           <div>Admission year</div>
           <select {...register('admissionYear')}>
@@ -224,7 +230,9 @@ export default function StepSchoolDetails() {
           </select>
           <ErrorText message={errors.admissionYear?.message} />
         </label>
+      </div>
 
+      <div className="form-element-wrapper">
         <label style={{ gridColumn: '1 / -1' }}>
           <div>
             Number of days from date of letter refusing a place within which parents can bring an appeal (must be at least 20)
