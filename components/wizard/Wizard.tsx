@@ -94,24 +94,24 @@ export default function Wizard() {
   // Restore from localStorage AFTER mount (client-side only)
   // This prevents hydration mismatch by ensuring server and client render the same initial state
   // TEMPORARILY DISABLED - uncomment to re-enable restoration
-  // useEffect(() => {
-  //   // Restore current step
-  //   const savedStep = localStorage.getItem(`${STORAGE_KEY}-step`)
-  //   if (savedStep) {
-  //     const step = parseInt(savedStep, 10)
-  //     if (step >= 0 && step < steps.length) {
-  //       setCurrentStep(step)
-  //     }
-  //   }
+  useEffect(() => {
+    // Restore current step
+    const savedStep = localStorage.getItem(`${STORAGE_KEY}-step`)
+    if (savedStep) {
+      const step = parseInt(savedStep, 10)
+      if (step >= 0 && step < steps.length) {
+        setCurrentStep(step)
+      }
+    }
 
-  //   // Restore form data
-  //   const saved = localStorage.getItem(STORAGE_KEY)
-  //   if (saved) {
-  //     const restored = deserializeFormData(saved)
-  //     // Use reset() to update form with restored values
-  //     methods.reset({ ...defaultValues, ...restored })
-  //   }
-  // }, [methods])
+    // Restore form data
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      const restored = deserializeFormData(saved)
+      // Use reset() to update form with restored values
+      methods.reset({ ...defaultValues, ...restored })
+    }
+  }, [methods])
 
   // Save form data to localStorage on change
   useEffect(() => {
