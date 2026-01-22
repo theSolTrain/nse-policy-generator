@@ -30,25 +30,25 @@ export default function StepSchoolDetails() {
 
       <div className="form-element-wrapper">
         <label>
-        <div>School address *</div>
-        <input {...register('schoolAddress')} />
-        <ErrorText message={errors.schoolAddress?.message} />
+          <div>School address *</div>
+          <input {...register('schoolAddress')} />
+          <ErrorText message={errors.schoolAddress?.message} />
         </label>
       </div>
 
       <div className="form-element-wrapper">
         <label>
-        <div>School website address</div>
-        <input placeholder="https://www.schoolwebsite.com" {...register('schoolWebsite')} />
-        <ErrorText message={errors.schoolWebsite?.message as string} />
+          <div>School website address</div>
+          <input placeholder="https://www.schoolwebsite.com" {...register('schoolWebsite')} />
+          <ErrorText message={errors.schoolWebsite?.message as string} />
         </label>
       </div>
 
       <div className="form-element-wrapper">
         <label>
-        <div>School type *</div>
-        <input {...register('schoolType')} />
-        <ErrorText message={errors.schoolType?.message} />
+          <div>School type *</div>
+          <input {...register('schoolType')} />
+          <ErrorText message={errors.schoolType?.message} />
         </label>
       </div>
 
@@ -62,7 +62,7 @@ export default function StepSchoolDetails() {
 
       {/* Logo upload */}
       <div className="form-element-wrapper">
-        <div style={{ marginBottom: 8 }}>School logo</div>
+        <div>School logo</div>
 
         <input
           type="file"

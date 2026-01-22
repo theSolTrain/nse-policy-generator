@@ -69,6 +69,10 @@
         input {
           width: 100%;
           max-width: 100%;
+
+          &[type="date"] {
+            width: fit-content;
+          }
         }
 
         textarea {
@@ -77,6 +81,10 @@
           max-width: 100%;
           min-height: 100px;
           resize: vertical;
+        }
+
+        &.form-element-wrapper--full-width {
+          grid-column: span 2;
         }
       }
 
