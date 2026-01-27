@@ -2,6 +2,7 @@
 
 import { useFormContext } from 'react-hook-form'
 import type { WizardFormValues } from '@/lib/schema/wizardSchema'
+import RichTextEditor from '../RichTextEditor'
 
 function ErrorText({ message }: { message?: string }) {
   if (!message) return null
@@ -13,10 +14,13 @@ export default function StepSchoolDetails() {
     register,
     setValue,
     watch,
+    control,
     formState: { errors },
   } = useFormContext<WizardFormValues>()
 
   const logo = watch('schoolLogo')
+  // Watch the faith-based criteria field to conditionally show the next question
+  const hadFaithBasedCriteria = watch('hadFaithBasedCriteriaLastYear')
 
   return (
     <div className="wizard__form-content">
@@ -25,6 +29,17 @@ export default function StepSchoolDetails() {
           <div>School name *</div>
           <input {...register('schoolName')} />
           <ErrorText message={errors.schoolName?.message} />
+        </label>
+      </div>
+
+      <div className="form-element-wrapper">
+        <label>
+          <div>School URN *</div>
+          <div style={{ marginTop: 8, fontSize: 12, opacity: 0.8 }}>
+            If you dont&apos;t know your schools URN, please find it on <a href="https://get-information-schools.service.gov.uk" style={{ color: 'blue' }} target="_blank" title="(opens in a new window)" rel="noopener noreferrer">GOV.UK</a>.
+          </div>
+          <input {...register('schoolURN')} />
+          <ErrorText message={errors.schoolURN?.message} />
         </label>
       </div>
 
@@ -116,12 +131,15 @@ export default function StepSchoolDetails() {
       </div>
 
       {/* Vision statement */}
-      <div className="form-element-wrapper">
-        <label>
-          <div>Vision statement*</div>
-          <textarea rows={6} {...register('visionStatement')} />
-          <ErrorText message={errors.visionStatement?.message} />
-        </label>
+      <div className="form-element-wrapper form-element-wrapper--full-width">
+        <div>
+          <div style={{ marginBottom: 8 }}>Vision statement*</div>
+          <RichTextEditor
+            name="visionStatement"
+            control={control}
+            placeholder="Enter your school's vision statement..."
+          />
+        </div>
       </div>
 
       <div className="form-element-wrapper">
@@ -181,7 +199,7 @@ export default function StepSchoolDetails() {
       </div>
 
       {/* Yes/No radios */}
-      <div className="form-element-wrapper">
+      <div className="form-element-wrapper form-element-wrapper--full-width">
         <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
           <legend>Was your school oversubscribed (in the previous admissions year, if applicable)?</legend>
           <label style={{ display: 'block', marginTop: 10 }}>
@@ -194,28 +212,56 @@ export default function StepSchoolDetails() {
         </fieldset>
       </div>
 
-      <div className="form-element-wrapper">
-      <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-        <legend>
-          Did your admissions arrangements contain faith-based oversubscription criteria (in the previous admissions year)?
-        </legend>
-        <label style={{ display: 'block', marginTop: 10 }}>
-          <input type="radio" value="yes" style={{ marginRight: 10, width: 'auto' }} {...register('hadFaithBasedCriteriaLastYear')} /> Yes
-        </label>
-        <label style={{ display: 'block', marginTop: 6 }}>
-          <input type="radio" value="no" style={{ marginRight: 10, width: 'auto' }} {...register('hadFaithBasedCriteriaLastYear')} /> No
-        </label>
-        <ErrorText message={errors.hadFaithBasedCriteriaLastYear?.message} />
-      </fieldset>
+      <div className="form-element-wrapper form-element-wrapper--full-width">
+        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
+          <legend>
+            Did your admissions arrangements contain faith-based oversubscription criteria (in the previous admissions year)?
+          </legend>
+          <label style={{ display: 'block', marginTop: 10 }}>
+            <input 
+              type="radio" 
+              value="yes" 
+              style={{ marginRight: 10, width: 'auto' }} 
+              {...register('hadFaithBasedCriteriaLastYear')} 
+            /> Yes
+          </label>
+          <label style={{ display: 'block', marginTop: 6 }}>
+            <input 
+              type="radio" 
+              value="no" 
+              style={{ marginRight: 10, width: 'auto' }} 
+              {...register('hadFaithBasedCriteriaLastYear', {
+                onChange: () => {
+                  // Clear the faith admissions field when switching to "no"
+                  setValue('faithAdmissionsLastYear', '', { shouldValidate: false })
+                }
+              })} 
+            /> No
+          </label>
+          <ErrorText message={errors.hadFaithBasedCriteriaLastYear?.message} />
+        </fieldset>
       </div>
 
+      {/* CONDITIONAL FIELD: Only show if "Yes" was selected above */}
+      {hadFaithBasedCriteria === 'yes' && (
+        <div className="form-element-wrapper form-element-wrapper--full-width">
+          <label>
+            <div>
+              How many pupils were admitted on the basis of faith as prioritised through faith oversubscription criteria (in the previous admissions year)?
+            </div>
+            <input {...register('faithAdmissionsLastYear')} />
+            <ErrorText message={errors.faithAdmissionsLastYear?.message} />
+          </label>
+        </div>
+      )}
+
       <div className="form-element-wrapper">
-        <label>
+        <label style={{ gridColumn: '1 / -1' }}>
           <div>
-            How many pupils were admitted on the basis of faith as prioritised through faith oversubscription criteria (in the previous admissions year)?
+            Number of days from date of letter refusing a place within which parents can bring an appeal (must be at least 20)
           </div>
-          <input {...register('faithAdmissionsLastYear')} />
-          <ErrorText message={errors.faithAdmissionsLastYear?.message} />
+          <input {...register('appealDays')} />
+          <ErrorText message={errors.appealDays?.message} />
         </label>
       </div>
 
@@ -229,16 +275,6 @@ export default function StepSchoolDetails() {
             <option value="2027/2028">2027/2028</option>
           </select>
           <ErrorText message={errors.admissionYear?.message} />
-        </label>
-      </div>
-
-      <div className="form-element-wrapper">
-        <label style={{ gridColumn: '1 / -1' }}>
-          <div>
-            Number of days from date of letter refusing a place within which parents can bring an appeal (must be at least 20)
-          </div>
-          <input {...register('appealDays')} />
-          <ErrorText message={errors.appealDays?.message} />
         </label>
       </div>
     </div>

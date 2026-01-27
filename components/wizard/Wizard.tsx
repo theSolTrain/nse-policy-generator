@@ -38,6 +38,7 @@ function deserializeFormData(json: string): Partial<WizardFormValues> {
 const defaultValues: WizardFormValues = {
   disclaimerAccepted: false,
   schoolName: '',
+  schoolURN: '',
   schoolAddress: '',
   schoolWebsite: '',
   schoolType: '',
@@ -93,7 +94,6 @@ export default function Wizard() {
 
   // Restore from localStorage AFTER mount (client-side only)
   // This prevents hydration mismatch by ensuring server and client render the same initial state
-  // TEMPORARILY DISABLED - uncomment to re-enable restoration
   useEffect(() => {
     // Restore current step
     const savedStep = localStorage.getItem(`${STORAGE_KEY}-step`)

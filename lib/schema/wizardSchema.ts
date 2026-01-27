@@ -11,6 +11,7 @@ export const wizardSchema = z.object({
 
   // Step 2: School Details
   schoolName: z.string().min(1, 'School name is required'),
+  schoolURN: z.string().min(1, 'School URN is required'),
   schoolAddress: z.string().min(1, 'School address is required'),
   schoolWebsite: z.string().url('Please enter a valid URL').or(z.literal('')).optional(),
   schoolType: z.string().min(1, 'School type is required'),

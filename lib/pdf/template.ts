@@ -294,7 +294,7 @@ export function generateHtmlTemplate(data: TemplateData): string {
 
     ${visionStatement ? `
     <h3>Vision Statement</h3>
-    <div style="margin-top: 8px; white-space: pre-wrap;">${visionStatement}</div>
+    <div style="margin-top: 8px;">${visionStatement}</div>
     ` : ''}
 
     <h3>Previous Year Information</h3>
