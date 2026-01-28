@@ -79,6 +79,14 @@
             cursor: pointer;
             width: fit-content;
           }
+
+          &[type="checkbox"] {
+            width: fit-content;
+          }
+
+          &[type="radio"] {
+            width: fit-content;
+          }
         }
 
         button {
@@ -142,6 +150,13 @@
         position: absolute;
         bottom: -22px;
         left: 0;
+      }
+
+      h4 {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0;
+        padding: 0;
       }
     }
   }

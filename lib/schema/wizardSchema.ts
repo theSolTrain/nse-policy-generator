@@ -72,13 +72,61 @@ export const wizardSchema = z.object({
   dateForwardedToLAandDBE: z.string().min(1, 'Forwarded date is required'),
 
   // Step 4: Admission Arrangements
+  // Conditional sections
+  includeSocialAndMedicalNeed: z.boolean().optional(),
+  includePupilPremium: z.boolean().optional(),
+  pupilPremiumMaxPercentage: z.string().optional(),
+  pupilPremiumTypes: z.object({
+    pupilPremium: z.boolean().optional(),
+    earlyYearsPupilPremium: z.boolean().optional(),
+    servicePremium: z.boolean().optional(),
+  }).optional(),
+  pupilPremiumNurseryName: z.string().optional(),
+  pupilPremiumNurseryTypes: z.object({
+    nurseryVersionPupilPremium: z.boolean().optional(),
+    nurseryVersionEarlyYearsPupilPremium: z.boolean().optional(),
+    nurseryVersionServicePremium: z.boolean().optional(),
+  }).optional(),
+
+  includeFaithBased: z.boolean().optional(),
+  faithBasedOptions: z.object({
+    catchmentAreaOrParish: z.boolean().optional(),
+    publicWorshipCoFE: z.boolean().optional(),
+    evangelicalAlliance: z.boolean().optional(),
+    otherFaiths: z.boolean().optional(),
+  }).optional(),
+  faithBasedChurchName: z.string().optional(),
+  faithBasedAttendanceFrequency: z.enum(['less_8', 'less_16']).optional(),
+
+  includeChildrenOfStaff: z.boolean().optional(),
+  childrenOfStaffCategories: z.object({
+    staffRecruited: z.boolean().optional(),
+    staffEmployed: z.boolean().optional(),
+  }).optional(),
+  childrenOfStaffType: z.enum(['teaching_staff', 'non_teaching_staff', 'all_staff']).optional(),
+
+  includeSiblings: z.boolean().optional(),
+  siblingsTiming: z.enum(['time_application', 'time_admission', 'catchment_parish', 'outside_catchment_parish']).optional(),
+
+  includeNamedFeederSchool: z.boolean().optional(),
+  namedFeederSchool: z.string().optional(),
+
+  includeDistanceFromSchool: z.boolean().optional(),
+  distanceSchoolCalculated: z.string().optional(),
+  howIsHomeAddressDetermined: z.string().optional(),
+
+  includeCatchmentArea: z.boolean().optional(),
+  catchmentMap: fileSchema.optional(),
+
+  // Tiebreaker
+  tiebreakerMeasure: z.enum(['crow_files', 'gis']).optional(),
+
+  // Legacy - keeping for backward compatibility but will be auto-generated from conditionals
   oversubscriptionCriteria: z.array(z.object({
     id: z.string(),
     text: z.string().min(1, 'Criterion text is required'),
     priority: z.number(),
   })).min(1, 'At least one oversubscription criterion is required'),
-
-  catchmentMap: fileSchema.optional(),
 
   // Step 5: Finalising
   criteriaOrder: z.array(z.string()).optional(), // Array of criterion IDs in desired order

@@ -60,7 +60,19 @@ export const steps: WizardStep[] = [
   {
     id: 'arrangements',
     title: 'School Admission Arrangements',
-    fields: ['oversubscriptionCriteria', 'catchmentMap'],
+    fields: [
+      'includeSocialAndMedicalNeed',
+      'includePupilPremium',
+      'includeFaithBased',
+      'includeChildrenOfStaff',
+      'includeSiblings',
+      'includeNamedFeederSchool',
+      'includeDistanceFromSchool',
+      'includeCatchmentArea',
+      'catchmentMap',
+      'tiebreakerMeasure',
+      // Conditional required fields will be validated via schema refinements
+    ],
   },
 
   {
