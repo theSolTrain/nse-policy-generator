@@ -78,7 +78,7 @@ export const steps: WizardStep[] = [
   {
     id: 'finalising',
     title: 'Finalising the Text',
-    fields: ['criteriaOrder', 'supportDocuments', 'contactEmail', 'contactPhone'],
+    fields: ['groupOrder', 'supportDocuments', 'contactEmail', 'contactPhone'],
   },
 
   { id: 'complete', title: 'Complete / Download', fields: [] },

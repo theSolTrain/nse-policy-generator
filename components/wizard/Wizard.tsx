@@ -112,7 +112,7 @@ const defaultValues: WizardFormValues = {
   tiebreakerMeasure: undefined,
   // Legacy - keeping for backward compatibility
   oversubscriptionCriteria: [],
-  criteriaOrder: undefined,
+  groupOrder: undefined,
   supportDocuments: [],
   contactEmail: '',
   contactPhone: '',

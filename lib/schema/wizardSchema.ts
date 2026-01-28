@@ -129,7 +129,7 @@ export const wizardSchema = z.object({
   })).min(1, 'At least one oversubscription criterion is required'),
 
   // Step 5: Finalising
-  criteriaOrder: z.array(z.string()).optional(), // Array of criterion IDs in desired order
+  groupOrder: z.array(z.string()).optional(), // Array of group IDs in desired order (e.g., ['social_medical', 'pupil_premium', 'faith_based'])
   supportDocuments: z.array(z.object({
     name: z.string().min(1, 'Document name is required'),
     url: z.string().url('Please enter a valid URL').or(z.literal('')),

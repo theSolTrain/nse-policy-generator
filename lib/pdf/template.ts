@@ -31,6 +31,144 @@ function formatLongDate(): string {
   return `${day} ${month} ${year}`
 }
 
+// Group metadata matching StepFinalising
+const GROUP_METADATA = {
+  looked_after: { id: 'looked_after', title: 'Looked After Children and Previously Looked After Children' },
+  social_medical: { id: 'social_medical', title: 'Social and Medical Need' },
+  pupil_premium: { id: 'pupil_premium', title: 'Pupil Premium' },
+  faith_based: { id: 'faith_based', title: 'Faith Based' },
+  children_of_staff: { id: 'children_of_staff', title: 'Children of Staff' },
+  siblings: { id: 'siblings', title: 'Siblings' },
+  named_feeder_school: { id: 'named_feeder_school', title: 'Named Feeder School' },
+  distance_from_school: { id: 'distance_from_school', title: 'Distance from School' },
+  catchment_area: { id: 'catchment_area', title: 'Catchment Area' },
+  any_other_children: { id: 'any_other_children', title: 'Any Other Children' },
+} as const
+
+type GroupId = keyof typeof GROUP_METADATA
+
+// Helper to generate group content HTML
+function generateGroupContent(groupId: GroupId, data: TemplateData): string {
+  switch (groupId) {
+    case 'looked_after':
+      return `
+        <p>Children who are looked after or were previously looked after, including those children who appear to have been in state care outside of England and ceased to be in state care as a result of being adopted.</p>
+      `
+    
+    case 'social_medical':
+      if (!data.includeSocialAndMedicalNeed) return ''
+      return `
+        <p>Children with a particular medical or social need that can only be met at this school. Supporting evidence in the form of a letter from a doctor or social worker or other relevant qualified, independent professional would be required.</p>
+      `
+    
+    case 'pupil_premium':
+      if (!data.includePupilPremium) return ''
+      const ppTypes: string[] = []
+      if (data.pupilPremiumTypes?.pupilPremium) ppTypes.push('pupil premium')
+      if (data.pupilPremiumTypes?.earlyYearsPupilPremium) ppTypes.push('early years pupil premium')
+      if (data.pupilPremiumTypes?.servicePremium) ppTypes.push('service premium')
+      
+      if (ppTypes.length === 0) return ''
+      
+      let ppText = `Children eligible for ${ppTypes.join(', ')}`
+      if (data.pupilPremiumMaxPercentage) {
+        ppText += ` (up to ${data.pupilPremiumMaxPercentage}% of places)`
+      }
+      
+      if (data.pupilPremiumNurseryName) {
+        const nurseryTypes: string[] = []
+        if (data.pupilPremiumNurseryTypes?.nurseryVersionPupilPremium) nurseryTypes.push('pupil premium')
+        if (data.pupilPremiumNurseryTypes?.nurseryVersionEarlyYearsPupilPremium) nurseryTypes.push('early years pupil premium')
+        if (data.pupilPremiumNurseryTypes?.nurseryVersionServicePremium) nurseryTypes.push('service premium')
+        
+        if (nurseryTypes.length > 0) {
+          ppText += `<br /><br />Children eligible for ${nurseryTypes.join(', ')} who are in a nursery class at ${data.pupilPremiumNurseryName}`
+        }
+      }
+      
+      return `<p>${ppText}</p>`
+    
+    case 'faith_based':
+      if (!data.includeFaithBased) return ''
+      const faithOptions: string[] = []
+      if (data.faithBasedOptions?.catchmentAreaOrParish) {
+        faithOptions.push(`Residence in the Parish or in the catchment area and attendance at public worship in a Church of England church${data.faithBasedChurchName ? ` (${data.faithBasedChurchName})` : ''}`)
+      }
+      if (data.faithBasedOptions?.publicWorshipCoFE) {
+        faithOptions.push('Attendance at public worship in any Church of England church')
+      }
+      if (data.faithBasedOptions?.evangelicalAlliance) {
+        faithOptions.push('A Christian Church means any church which is designated under the Ecumenical Relations Measure nationally by the Archbishops of Canterbury and York or locally by the diocesan bishop; or is a member of Churches Together in England; or of the Evangelical Alliance; or a Partner church of Affinity')
+      }
+      if (data.faithBasedOptions?.otherFaiths) {
+        faithOptions.push('Attendance at public worship or its equivalent by members of other faiths')
+      }
+      
+      let faithText = faithOptions.join('<br />')
+      if (data.faithBasedAttendanceFrequency) {
+        const frequency = data.faithBasedAttendanceFrequency === 'less_8' 
+          ? 'Eight times in the twelve months immediately prior to the date of application'
+          : 'Sixteen times in the twenty-four months immediately prior to the closing date for application'
+        faithText += `<br /><br />Frequency requirement: ${frequency}`
+      }
+      
+      return `<p>${faithText}</p>`
+    
+    case 'children_of_staff':
+      if (!data.includeChildrenOfStaff) return ''
+      const staffCategories: string[] = []
+      if (data.childrenOfStaffCategories?.staffRecruited) {
+        staffCategories.push('Children of staff recruited to fill a vacant post for which there is a demonstrable skill shortage')
+      }
+      if (data.childrenOfStaffCategories?.staffEmployed) {
+        let staffType = 'staff'
+        if (data.childrenOfStaffType === 'teaching_staff') staffType = 'teaching staff'
+        else if (data.childrenOfStaffType === 'non_teaching_staff') staffType = 'non-teaching staff'
+        else if (data.childrenOfStaffType === 'all_staff') staffType = 'all staff'
+        staffCategories.push(`Children of ${staffType} who have been employed at the school for two or more years at the time at which application for admission is made`)
+      }
+      return `<p>${staffCategories.join('<br />')}</p>`
+    
+    case 'siblings':
+      if (!data.includeSiblings) return ''
+      const siblingTiming = data.siblingsTiming === 'time_application' 
+        ? 'at the time of application'
+        : data.siblingsTiming === 'time_admission'
+        ? 'at the time of admission'
+        : data.siblingsTiming === 'catchment_parish'
+        ? 'at the time of application who live within the catchment area/parish'
+        : 'at the time of application who live outside the catchment area/parish'
+      return `<p>Children with a sibling attending the school ${siblingTiming}. (&apos;Sibling&apos; means a brother or sister, a half brother or sister, a legally adopted brother or sister or half-brother or sister, a step brother or sister, or other child living in the same household who, in any of these cases, will be living with them at the same address at the date of their entry to the academy).</p>`
+    
+    case 'named_feeder_school':
+      if (!data.includeNamedFeederSchool || !data.namedFeederSchool) return ''
+      return `<p>Children attending ${data.namedFeederSchool}.</p>`
+    
+    case 'distance_from_school':
+      if (!data.includeDistanceFromSchool) return ''
+      let distanceText = ''
+      if (data.distanceSchoolCalculated) {
+        distanceText += `<p><strong>How distance is calculated:</strong> ${data.distanceSchoolCalculated}</p>`
+      }
+      if (data.howIsHomeAddressDetermined) {
+        distanceText += `<p><strong>How home address is determined:</strong> ${data.howIsHomeAddressDetermined}</p>`
+      }
+      return distanceText
+    
+    case 'catchment_area':
+      if (!data.includeCatchmentArea) return ''
+      return data.catchmentMapBase64 
+        ? `<div class="catchment-map"><img src="${data.catchmentMapBase64}" alt="Catchment Area Map" /></div>`
+        : '<p>Catchment area applies (map not provided).</p>'
+    
+    case 'any_other_children':
+      return `<p>Any other children.</p>`
+    
+    default:
+      return ''
+  }
+}
+
 export function generateHtmlTemplate(data: TemplateData): string {
   const {
     schoolName,
@@ -60,18 +198,52 @@ export function generateHtmlTemplate(data: TemplateData): string {
     dateIssuedForConsultation,
     dateDeterminedByGovBody,
     dateForwardedToLAandDBE,
-    oversubscriptionCriteria,
     catchmentMapBase64,
-    criteriaOrder,
+    groupOrder,
     supportDocuments,
     contactEmail,
     contactPhone,
+    // Conditional fields
+    includeSocialAndMedicalNeed,
+    includePupilPremium,
+    pupilPremiumMaxPercentage,
+    pupilPremiumTypes,
+    pupilPremiumNurseryName,
+    pupilPremiumNurseryTypes,
+    includeFaithBased,
+    faithBasedOptions,
+    faithBasedChurchName,
+    faithBasedAttendanceFrequency,
+    includeChildrenOfStaff,
+    childrenOfStaffCategories,
+    childrenOfStaffType,
+    includeSiblings,
+    siblingsTiming,
+    includeNamedFeederSchool,
+    namedFeederSchool,
+    includeDistanceFromSchool,
+    distanceSchoolCalculated,
+    howIsHomeAddressDetermined,
+    includeCatchmentArea,
+    tiebreakerMeasure,
   } = data
 
-  // Get ordered criteria
-  const orderedCriteria = criteriaOrder && criteriaOrder.length > 0
-    ? criteriaOrder.map((id) => oversubscriptionCriteria.find((c) => c.id === id)).filter(Boolean)
-    : oversubscriptionCriteria
+  // Build active groups list (same logic as StepFinalising)
+  const activeGroups: GroupId[] = ['looked_after']
+  if (includeSocialAndMedicalNeed) activeGroups.push('social_medical')
+  if (includePupilPremium) activeGroups.push('pupil_premium')
+  if (includeFaithBased) activeGroups.push('faith_based')
+  if (includeChildrenOfStaff) activeGroups.push('children_of_staff')
+  if (includeSiblings) activeGroups.push('siblings')
+  if (includeNamedFeederSchool) activeGroups.push('named_feeder_school')
+  if (includeDistanceFromSchool) activeGroups.push('distance_from_school')
+  if (includeCatchmentArea) activeGroups.push('catchment_area')
+  activeGroups.push('any_other_children')
+
+  // Use groupOrder if available, otherwise use activeGroups order
+  const orderedGroups = groupOrder && groupOrder.length > 0
+    ? groupOrder.filter((id) => activeGroups.includes(id as GroupId)) as GroupId[]
+    : activeGroups
 
   const selectedYearGroups = Object.entries(yearGroups || {})
     .filter(([, selected]) => selected)
@@ -345,30 +517,50 @@ export function generateHtmlTemplate(data: TemplateData): string {
 
   <div class="section">
     <h2>3. Oversubscription Criteria</h2>
-    ${orderedCriteria && orderedCriteria.length > 0 ? `
+    <p style="margin-bottom: 16px;">
+      All children whose Education, Health and Care Plan (EHCP) names the school must be admitted. 
+      This is not an oversubscription criterion, but the children count against the PAN. If the number 
+      of applications received is less than the PAN, all applicants will be offered places. If, after 
+      the admission of any children with an EHCP naming the school, the number of applications exceeds 
+      the number of places remaining available, the school&apos;s oversubscription criteria will be 
+      used to determine the allocation of places.
+    </p>
+    ${orderedGroups && orderedGroups.length > 0 ? `
     <div class="criteria-list">
-      ${orderedCriteria.map((criterion, index) => `
+      ${orderedGroups.map((groupId, index) => {
+        const group = GROUP_METADATA[groupId]
+        const content = generateGroupContent(groupId, data)
+        if (!content) return '' // Skip groups with no content
+        return `
         <div class="criterion-item">
           <span class="criterion-number">${index + 1}.</span>
-          <div class="criterion-text">${criterion?.text || ''}</div>
+          <div class="criterion-text">
+            <strong>${group.title}</strong>
+            ${content}
+          </div>
         </div>
-      `).join('')}
+        `
+      }).join('')}
     </div>
     ` : '<p>No criteria specified.</p>'}
   </div>
 
-  ${catchmentMapBase64 ? `
+  ${tiebreakerMeasure ? `
   <div class="section">
-    <h2>4. Catchment Area Map</h2>
-    <div class="catchment-map">
-      <img src="${catchmentMapBase64}" alt="Catchment Area Map" />
-    </div>
+    <h2>4. Tiebreaker</h2>
+    <h3>Distance from school</h3>
+    <p><strong>Measure used:</strong> ${
+      tiebreakerMeasure === 'crow_files'
+        ? 'We will measure the distance by a straight line. All straight-line distances are calculated electronically using a geographical information system and with the support of the Local Authority where required'
+        : 'This will be measured by the shortest walking distance by road or maintained footpath or other public rights of way from the pupil&apos;s home, to the main entrance point of the school using a GIS computerised mapping system'
+    }</p>
+    <p>If two or more applicants for the final place live the same distance from the school, random allocation will be used as a final tie-breaker, and will be supervised by someone independent of the school.</p>
   </div>
   ` : ''}
 
   ${supportDocuments && supportDocuments.length > 0 ? `
   <div class="section">
-    <h2>5. Support Documents</h2>
+    <h2>${tiebreakerMeasure ? '5' : '4'}. Support Documents</h2>
     <div class="support-docs">
       ${supportDocuments.map((doc) => `
         <div class="support-doc-item">
@@ -382,7 +574,7 @@ export function generateHtmlTemplate(data: TemplateData): string {
 
   ${contactEmail || contactPhone ? `
   <div class="section">
-    <h2>6. Contact Information</h2>
+    <h2>${tiebreakerMeasure ? (supportDocuments && supportDocuments.length > 0 ? '6' : '5') : (supportDocuments && supportDocuments.length > 0 ? '5' : '4')}. Contact Information</h2>
     <div class="contact-info">
       ${contactEmail ? `<div class="info-row"><span class="info-label">Email:</span> ${contactEmail}</div>` : ''}
       ${contactPhone ? `<div class="info-row"><span class="info-label">Phone:</span> ${contactPhone}</div>` : ''}
