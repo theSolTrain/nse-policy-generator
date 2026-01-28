@@ -26,20 +26,20 @@ export default function StepSchoolDetails() {
     <div className="wizard__form-content">
       <div className="form-element-wrapper">
         <label>
-          <div>School name *</div>
-          <input {...register('schoolName')} />
-          <ErrorText message={errors.schoolName?.message} />
-        </label>
-      </div>
-
-      <div className="form-element-wrapper">
-        <label>
           <div>School URN *</div>
           <div style={{ marginTop: 8, fontSize: 12, opacity: 0.8 }}>
             If you dont&apos;t know your schools URN, please find it on <a href="https://get-information-schools.service.gov.uk" style={{ color: 'blue' }} target="_blank" title="(opens in a new window)" rel="noopener noreferrer">GOV.UK</a>.
           </div>
           <input {...register('schoolURN')} />
           <ErrorText message={errors.schoolURN?.message} />
+        </label>
+      </div>
+      
+      <div className="form-element-wrapper">
+        <label>
+          <div>School name *</div>
+          <input {...register('schoolName')} />
+          <ErrorText message={errors.schoolName?.message} />
         </label>
       </div>
 

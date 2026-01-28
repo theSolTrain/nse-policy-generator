@@ -82,19 +82,67 @@ export default function StepFinalising() {
   useEffect(() => {
     const currentOrder = watch('groupOrder') || []
     
-    // Only initialize if we don't have an order yet, or if active groups changed
+    // Check if fixed groups are in correct positions
+    const lookedAfterIsFirst = currentOrder[0] === 'looked_after'
+    const anyOtherChildrenIsLast = currentOrder.length > 0 && currentOrder[currentOrder.length - 1] === 'any_other_children'
+    
+    // Only initialize if we don't have an order yet, or if active groups changed, or if fixed positions are wrong
     if (currentOrder.length === 0 || 
         currentOrder.length !== activeGroups.length ||
-        !activeGroups.every((id) => currentOrder.includes(id))) {
-      // Filter out any groups that are no longer active, and add any new ones
+        !activeGroups.every((id) => currentOrder.includes(id)) ||
+        !lookedAfterIsFirst ||
+        !anyOtherChildrenIsLast) {
+      // Filter out any groups that are no longer active, preserving order
       const filteredOrder = currentOrder.filter((id) => activeGroups.includes(id as GroupId))
+      
+      // Find new groups that need to be added
       const newGroups = activeGroups.filter((id) => !filteredOrder.includes(id))
-      const newOrder = [...filteredOrder, ...newGroups]
+      
+      // Build new order ensuring fixed positions:
+      // 1. "looked_after" must be first
+      // 2. "any_other_children" must be last
+      // 3. New groups go in the middle (before "any_other_children")
+      // IMPORTANT: Always extract fixed groups separately, even if they're in the wrong position
+      const lookedAfter = activeGroups.includes('looked_after') ? 'looked_after' : null
+      const anyOtherChildren = activeGroups.includes('any_other_children') ? 'any_other_children' : null
+      
+      // Get middle groups (everything except the fixed first/last)
+      // This includes both existing middle groups AND any that were incorrectly placed
+      const middleGroups = filteredOrder.filter(
+        (id) => id !== 'looked_after' && id !== 'any_other_children'
+      )
+      
+      // Combine: first + middle + new groups + last
+      const newOrder: string[] = []
+      if (lookedAfter) newOrder.push(lookedAfter)
+      newOrder.push(...middleGroups)
+      newOrder.push(...newGroups)
+      if (anyOtherChildren) newOrder.push(anyOtherChildren)
+      
       setGroupOrder(newOrder)
       setValue('groupOrder', newOrder)
     } else if (groupOrder.length === 0) {
-      // Use existing order from form state
-      setGroupOrder(currentOrder)
+      // Use existing order from form state, but validate fixed positions
+      const validatedOrder = [...currentOrder]
+      const lookedAfterIndex = validatedOrder.indexOf('looked_after')
+      const anyOtherChildrenIndex = validatedOrder.indexOf('any_other_children')
+      
+      // Ensure "looked_after" is first
+      if (lookedAfterIndex > 0) {
+        validatedOrder.splice(lookedAfterIndex, 1)
+        validatedOrder.unshift('looked_after')
+      }
+      
+      // Ensure "any_other_children" is last
+      if (anyOtherChildrenIndex >= 0 && anyOtherChildrenIndex < validatedOrder.length - 1) {
+        validatedOrder.splice(anyOtherChildrenIndex, 1)
+        validatedOrder.push('any_other_children')
+      }
+      
+      setGroupOrder(validatedOrder)
+      if (JSON.stringify(validatedOrder) !== JSON.stringify(currentOrder)) {
+        setValue('groupOrder', validatedOrder)
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeGroups.length, setValue])
@@ -129,8 +177,9 @@ export default function StepFinalising() {
       <div>
         <h3 style={{ marginTop: 0, marginBottom: 12 }}>Reorder Oversubscription Criteria Groups</h3>
         <p style={{ fontSize: 14, opacity: 0.8, marginBottom: 16 }}>
-          Review and reorder your oversubscription criteria groups. The order shown here will be used in the final PDF. 
-          &quot;Looked After Children&quot; will always appear first, and &quot;Any Other Children&quot; will always appear last.
+          Please now arrange the order of priority in which you would like the oversubscription criteria to appear in the final text of your admission arrangements. Please note that when you have done this, a further final category (&quot;All Other Children&quot;) will be added at the end of the list automatically.
+          <br /><br />
+          As well as the oversubscription criteria you have selected, the final word document/PDF will also contain additional standard provisions so that parents are informed about matters such as how any attendance at public worship requirements apply when places of worship have been required to close, admissions outside the normal round, appeals and waiting lists.
         </p>
 
         {groupOrder.length > 0 ? (
